@@ -17,34 +17,34 @@ def get_template(file_name):
 
 def prediction(req):
     if req.method == 'POST':
-        harvest_result = req.POST.get('harvest_result')
         result = req.POST.get('result')
         netto = req.POST.get('netto')
         harvest_power = req.POST.get('power')
+        tonnage = req.POST.get('tonnage')
 
         data = pd.DataFrame({
-            'Hasil Panen': [float(harvest_result)],
+            'Hasil Panen': [1.],
             'tenaga panen': [float(harvest_power)],
             'Hasil': [float(result)],
             'Netto': [float(netto)],
-            'Tonase': [1]
+            'Tonase': [float(tonnage)],
         })
 
         columns_to_scale = ['Hasil Panen', 'tenaga panen', 'Hasil', 'Netto', 'Tonase']
         scaled_data = scaler.transform(data[columns_to_scale])
         data[columns_to_scale] = scaled_data
-        data = data.drop('Tonase', axis=1)
+        data = data.drop('Hasil Panen', axis=1)
 
         pred = model.predict(data)
         pred_result = get_pred(pred, scaler)
         pred = int(np.round(pred_result))
 
         context = {
-            'tonase': pred,
-            'harvest_result': harvest_result,
+            'tonnage': tonnage,
             "harvest_power": harvest_power,
             "result": result,
-            "netto": netto
+            "netto": netto,
+            'harvest_result': pred
         }
 
         return render(req, get_template('main'), context=context)
@@ -58,13 +58,13 @@ def save_pred(request):
         harvest_power = request.POST.get("harvest_power")
         result = request.POST.get("result")
         netto = request.POST.get("netto")
-        tonase_result = request.POST.get("tonase_result")
+        tonnage = request.POST.get("tonnage")
         res_model = Result.objects.create(
             harvest_result=harvest_result,
             harvest_power=harvest_power,
             result=result,
             netto=netto,
-            tonase=tonase_result
+            tonnage=tonnage,
         )
         res_model.save()
         return redirect('prediction')

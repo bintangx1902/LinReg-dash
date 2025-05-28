@@ -21,28 +21,19 @@
                 <div class="row mx-auto">
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 row">
                         <div class="col-2 col-md-2 col-lg-2">
-                            <label for="result" class="form-label">Hasil :</label>
-                        </div>
-                        <div class="col-10 col-md-10 col-lg-10">
-                            <input type="number" name="result" id="result" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
-                        <div class="col-2 col-md-2 col-lg-2">
                             <label for="power" class="form-label">Tenaga Panen : </label>
                         </div>
                         <div class="col-10 col-md-10 col-lg-10">
-                            <input type="number" name="power" id="power" class="form-control">
+                            <input type="number" step="1" name="power" id="power" class="form-control">
                         </div>
                     </div>
-
+                    
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
                         <div class="col-2 col-md-2 col-lg-2">
-                            <label for="harvest_result" class="form-label">Hasil Panen : </label>
+                            <label for="result" class="form-label">Hasil :</label>
                         </div>
                         <div class="col-10 col-md-10 col-lg-10">
-                            <input type="number" name="harvest_result" id="harvest_result" class="form-control">
+                            <input type="number" step="any" name="result" id="result" class="form-control">
                         </div>
                     </div>
 
@@ -51,9 +42,19 @@
                             <label for="netto" class="form-label">Netto : </label>
                         </div>
                         <div class="col-10 col-md-10 col-lg-10">
-                            <input type="number" name="netto" id="netto" class="form-control">
+                            <input type="number" step="any" name="netto" id="netto" class="form-control">
                         </div>
                     </div>
+
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
+                        <div class="col-2 col-md-2 col-lg-2">
+                            <label for="tonnage" class="form-label">Tonnage : </label>
+                        </div>
+                        <div class="col-10 col-md-10 col-lg-10">
+                            <input type="number" step="any" name="tonnage" id="tonnage" class="form-control">
+                        </div>
+                    </div>
+
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
                         <div class="col-10 col-md-10 col-lg-10"></div>
                         <div class="col-2 col-md-2 col-lg-2 mr-auto">
@@ -72,17 +73,17 @@
                     {% csrf_token %}
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 row">
                         <div class="col-2 col-md-2 col-lg-2">
-                            <label for="result1" class="form-label">Tonase :</label>
+                            <label for="harvest_result" class="form-label">Hasil Panen :</label>
                         </div>
                         <div class="col-10 col-md-10 col-lg-10">
-                            <input type="number" id="result1" name="tonase_result" class="form-control bg-transparent"
-                                   readonly value="{{ tonase }}">
+                            <input type="number" id="result1" name="harvest_result" class="form-control bg-transparent"
+                                   readonly value="{{ harvest_result }}">
                         </div>
                     </div>
-                    <input type="hidden" name="harvest_result" value="{{ harvest_result }}">
                     <input type="hidden" name="harvest_power" value="{{ harvest_power }}">
                     <input type="hidden" name="result" value="{{ result }}">
                     <input type="hidden" name="netto" value="{{ netto }}">
+                    <input type="hidden" name="tonnage" value="{{ tonnage }}"> 
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
                         <div class="col-10 col-md-10 col-lg-10"></div>
                         <div class="col-2 col-md-2 col-lg-2 mr-auto">

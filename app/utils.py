@@ -4,8 +4,6 @@ import joblib
 import numpy as np
 import pandas as pd
 from django.conf import settings
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
 
 
 def load_scaler():
@@ -25,4 +23,4 @@ def get_pred(prediction, scaler):
     final_unscaled = scaler.inverse_transform(combined)
     final_df_pred = pd.DataFrame(final_unscaled,
                                  columns=['Hasil Panen', 'tenaga panen', 'Hasil', 'Netto', 'Tonase'])
-    return final_df_pred['Tonase'].to_numpy()[0]
+    return final_df_pred['Hasil Panen'].to_numpy()[0]

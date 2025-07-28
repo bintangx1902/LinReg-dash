@@ -11,14 +11,14 @@ def load_scaler():
 
 
 def load_model():
-    path = os.path.join(settings.MEDIA_ROOT, 'model', 'linear_regression_model.pkl')
+    path = os.path.join(settings.STATIC_ROOT, 'model', 'linear_regression_model_2023_lengkap.pkl')
     return joblib.load(path)
 
 
 def get_pred(prediction, scaler):
     features_filled = np.ones((len(prediction), 4))
     tonase_column = prediction.reshape(-1, 1)
-    combined = np.hstack((features_filled, tonase_column))
+    combined = np.hstack((tonase_column, features_filled))
 
     final_unscaled = scaler.inverse_transform(combined)
     final_df_pred = pd.DataFrame(final_unscaled,

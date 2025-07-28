@@ -23,7 +23,7 @@ def prediction(req):
         tonnage = req.POST.get('tonnage')
 
         data = pd.DataFrame({
-            'Hasil Panen': [1.],
+            'Hasil Panen': [0.],
             'tenaga panen': [float(harvest_power)],
             'Hasil': [float(result)],
             'Netto': [float(netto)],

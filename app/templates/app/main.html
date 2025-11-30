@@ -19,18 +19,10 @@
             <form method="post">
                 {% csrf_token %}
                 <div class="row mx-auto">
+
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 row">
                         <div class="col-2 col-md-2 col-lg-2">
-                            <label for="power" class="form-label">Tenaga Panen : </label>
-                        </div>
-                        <div class="col-10 col-md-10 col-lg-10">
-                            <input type="number" step="1" name="power" id="power" class="form-control">
-                        </div>
-                    </div>
-                    
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
-                        <div class="col-2 col-md-2 col-lg-2">
-                            <label for="result" class="form-label">Hasil :</label>
+                            <label for="result" class="form-label">Hasil (HA) :<small class="d-block">S/D Hi</small></label>
                         </div>
                         <div class="col-10 col-md-10 col-lg-10">
                             <input type="number" step="any" name="result" id="result" class="form-control">
@@ -39,21 +31,30 @@
 
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
                         <div class="col-2 col-md-2 col-lg-2">
-                            <label for="netto" class="form-label">Netto : </label>
+                            <label for="power" class="form-label">Tenaga Panen : <small class="d-block">S/D Hi</small></label>
                         </div>
                         <div class="col-10 col-md-10 col-lg-10">
-                            <input type="number" step="any" name="netto" id="netto" class="form-control">
+                            <input type="number" step="1" name="power" id="power" class="form-control">
                         </div>
                     </div>
 
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
-                        <div class="col-2 col-md-2 col-lg-2">
-                            <label for="tonnage" class="form-label">Tonnage : </label>
-                        </div>
-                        <div class="col-10 col-md-10 col-lg-10">
-                            <input type="number" step="any" name="tonnage" id="tonnage" class="form-control">
-                        </div>
-                    </div>
+{#                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">#}
+{#                        <div class="col-2 col-md-2 col-lg-2">#}
+{#                            <label for="netto" class="form-label">Netto : </label>#}
+{#                        </div>#}
+{#                        <div class="col-10 col-md-10 col-lg-10">#}
+{#                            <input type="number" step="any" name="netto" id="netto" class="form-control">#}
+{#                        </div>#}
+{#                    </div>#}
+{##}
+{#                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">#}
+{#                        <div class="col-2 col-md-2 col-lg-2">#}
+{#                            <label for="tonnage" class="form-label">Tonnage : </label>#}
+{#                        </div>#}
+{#                        <div class="col-10 col-md-10 col-lg-10">#}
+{#                            <input type="number" step="any" name="tonnage" id="tonnage" class="form-control">#}
+{#                        </div>#}
+{#                    </div>#}
 
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
                         <div class="col-10 col-md-10 col-lg-10"></div>
@@ -68,12 +69,12 @@
     {% if result is not None %}
         <div class="card mt-4">
             <div class="card-body">
-                <h2>Hasil Prediksi</h2>
-                <form method="post" enctype="multipart/form-data" action="{% url 'save' %}">
+                <h2>Hasil Prediksi</h2><small>Note : Hasil prediksi bisa lebih kecil atau lebih besar</small>
+                <form class="mt-3" method="post" enctype="multipart/form-data" action="{% url 'save' %}">
                     {% csrf_token %}
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 row">
                         <div class="col-2 col-md-2 col-lg-2">
-                            <label for="harvest_result" class="form-label">Hasil Panen :</label>
+                            <label for="harvest_result" class="form-label">Hasil Panen :<small class="d-block">S/D Hi</small></label>
                         </div>
                         <div class="col-10 col-md-10 col-lg-10">
                             <input type="number" id="result1" name="harvest_result" class="form-control bg-transparent"
@@ -82,8 +83,6 @@
                     </div>
                     <input type="hidden" name="harvest_power" value="{{ harvest_power }}">
                     <input type="hidden" name="result" value="{{ result }}">
-                    <input type="hidden" name="netto" value="{{ netto }}">
-                    <input type="hidden" name="tonnage" value="{{ tonnage }}"> 
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-3 row">
                         <div class="col-10 col-md-10 col-lg-10"></div>
                         <div class="col-2 col-md-2 col-lg-2 mr-auto">

@@ -18,32 +18,23 @@ def get_template(file_name):
 def prediction(req):
     if req.method == 'POST':
         result = req.POST.get('result')
-        netto = req.POST.get('netto')
         harvest_power = req.POST.get('power')
-        tonnage = req.POST.get('tonnage')
 
         data = pd.DataFrame({
-            'Hasil Panen': [1.],
-            'tenaga panen': [float(harvest_power)],
             'Hasil': [float(result)],
-            'Netto': [float(netto)],
-            'Tonase': [float(tonnage)],
+            'tenaga panen': [float(harvest_power)],
         })
 
-        columns_to_scale = ['Hasil Panen', 'tenaga panen', 'Hasil', 'Netto', 'Tonase']
-        scaled_data = scaler.transform(data[columns_to_scale])
+        columns_to_scale = ['Hasil', 'tenaga panen']
+        scaled_data = scaler.transform(data)
         data[columns_to_scale] = scaled_data
-        data = data.drop('Hasil Panen', axis=1)
 
         pred = model.predict(data)
-        pred_result = get_pred(pred, scaler)
-        pred = int(np.round(pred_result))
+        pred = int(np.round(pred))
 
         context = {
-            'tonnage': tonnage,
             "harvest_power": harvest_power,
             "result": result,
-            "netto": netto,
             'harvest_result': pred
         }
 

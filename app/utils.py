@@ -15,7 +15,7 @@ def load_scaler():
 
 
 def load_model():
-    path = os.path.join(settings.STATIC_ROOT, 'model', 'final_model.pkl')
+    path = os.path.join(settings.MEDIA_ROOT, 'model', 'final_model.pkl')
     return joblib.load(path)
 
 

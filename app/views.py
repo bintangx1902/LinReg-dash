@@ -45,11 +45,11 @@ def prediction(req):
 
 def save_pred(request):
     if request.method == "POST":
-        harvest_result = request.POST.get("harvest_result")
-        harvest_power = request.POST.get("harvest_power")
-        result = request.POST.get("result")
-        netto = request.POST.get("netto")
-        tonnage = request.POST.get("tonnage")
+        harvest_result = float(request.POST.get("harvest_result") or 0)
+        harvest_power = float(request.POST.get("harvest_power") or 0)
+        result = float(request.POST.get("result") or 0)
+        netto = float(request.POST.get("netto") or 0)
+        tonnage = float(request.POST.get("tonnage") or 0)
         res_model = Result.objects.create(
             harvest_result=harvest_result,
             harvest_power=harvest_power,

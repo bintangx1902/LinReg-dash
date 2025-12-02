@@ -54,8 +54,8 @@ def save_pred(request):
             harvest_result=harvest_result,
             harvest_power=harvest_power,
             result=result,
-            netto=netto,
-            tonnage=tonnage,
+            # netto=netto,
+            # tonnage=tonnage,
         )
         res_model.save()
         return redirect('prediction')

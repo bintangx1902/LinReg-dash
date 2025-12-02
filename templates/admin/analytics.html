@@ -6,16 +6,51 @@
 {% endblock %}
 
 {% block content %}
-<h1>Dashboard Analitik Model Linear Regression</h1>
-<div id="plotly-chart" style="height:500px;"></div>
-<script>
-    {#var fig = JSON.parse('{{ fig|safe }}');#}
-    var fig = {{ fig|safe }};
-    console.log(fig);
-    document.addEventListener('DOMContentLoaded', function() {
-        Plotly.newPlot('plotly-chart', fig.data, fig.layout);
-    });
-    {#Plotly.newPlot('plotly-chart', fig.data, fig.layout);#}
-</script>
+    <h1>Dashboard Analitik Model Linear Regression</h1>
+
+    <div class="harvest_result">
+        <h2>Sebaran data pada hasil panen</h2>
+        <div id="plot-harvest-result" style="height: 400px"></div>
+        <br>
+    </div>
+
+    <div class="harvest_power">
+        <h2>Sebaran data hasil panen dan tenaga panen</h2>
+        <div id="plot-power-result" style="height: 400px"></div>
+        <br>
+    </div>
+
+    <div class="comparison">
+    <h2>Plot relasi data antara hasil panen dengan hasil dan tenaga panen</h2>
+        <div id="comparing" style="height: 400px"></div>
+        <br>
+    </div>
+
+
+    <div id="plotly-chart" style="height:500px;"></div>
+    <script>
+        {#var fig = JSON.parse('{{ fig|safe }}');#}
+        var harvest_result = {{ harvest_result_fig | safe }};
+        var power_and_result = {{ power_and_result | safe }}
+        var comparison = {{ comparison | safe }}
+        var test_fig = {{ test_fig|safe }};
+
+        document.addEventListener('DOMContentLoaded', function () {
+            Plotly.newPlot('plot-harvest-result', harvest_result.data, harvest_result.layout);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            Plotly.newPlot('plot-power-result', power_and_result.data, power_and_result.layout);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            Plotly.newPlot('comparing', comparison.data, comparison.layout);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            Plotly.newPlot('plotly-chart', test_fig.data, test_fig.layout);
+        });
+        {#Plotly.newPlot('plotly-chart', fig.data, fig.layout);#}
+    </script>
 
 {% endblock %}

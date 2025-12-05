@@ -39,21 +39,22 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
         path = os.path.join(settings.MEDIA_ROOT, 'model', 'ScaledData.xlsx')
         df = pd.read_excel(path).dropna()
 
-        X = df[['Hasil', 'tenaga panen']]
+        X = df[['Tanggal', 'Hasil', 'tenaga panen']]
         y = df['Hasil Panen']
 
-        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
-
+        x_train, x_test, y_train, y_test = train_test_split(X.drop('Tanggal', axis=1), y, test_size=0.2, shuffle=False)
+        _, test_date = train_test_split(X['Tanggal'], test_size=0.2, shuffle=False)
+        
         pred = model.predict(x_test)
         pred_series = pd.Series(pred, index=x_test.index)
 
         harvest_result_fig = go.Figure()
-        harvest_result_fig.add_trace(go.Scatter(x=X.index, y=y, name='Harvest Result'))
+        harvest_result_fig.add_trace(go.Scatter(x=X['Tanggal'], y=y, name='Harvest Result'))
 
         harvest_result_fig.update_layout(
             title='Sebaran Hasil Panen',
             xaxis_tickangle=-45,
-            xaxis_title='Index',
+            xaxis_title='Tanggal',
             yaxis_title='Harvest Result',
         )
 
@@ -64,7 +65,7 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
 
         power_and_result.add_trace(
             go.Scatter(
-                x=X.index,
+                x=X['Tanggal'],
                 y=y,
                 name='Hasil (HA)',
                 mode='lines'  # Gunakan 'lines' agar bentuknya garis seperti di gambar
@@ -74,7 +75,7 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
 
         power_and_result.add_trace(
             go.Scatter(
-                x=X.index,
+                x=X['Tanggal'],
                 y=y,
                 name='Tenaga Panen',
                 mode='lines'
@@ -137,12 +138,12 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
 
 
         test_fig = go.Figure()
-        test_fig.add_trace(go.Scatter(x=x_test.index, y=y_test, mode='lines', name='Data Asli'))
-        test_fig.add_trace(go.Scatter(x=pred_series.index, y=pred_series, mode='lines', name='Prediksi'))
+        test_fig.add_trace(go.Scatter(x=test_date, y=y_test, mode='lines', name='Data Asli'))
+        test_fig.add_trace(go.Scatter(x=test_date, y=pred_series, mode='lines', name='Prediksi'))
 
         test_fig.update_layout(
             title="Perbandingan Data Asli vs Prediksi",
-            xaxis_title="Index",
+            xaxis_title="Tanggal",
             yaxis_title="Hasil Panen"
         )
 

@@ -43,10 +43,15 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
         y = df['Hasil Panen']
 
         x_train, x_test, y_train, y_test = train_test_split(X.drop('Tanggal', axis=1), y, test_size=0.2, shuffle=False)
-        _, test_date = train_test_split(X['Tanggal'], test_size=0.2, shuffle=False)
+        train_date, test_date = train_test_split(X['Tanggal'], test_size=0.2, shuffle=False)
         
         pred = model.predict(x_test)
+        train_pred = model.predict(x_train)
+
         pred_series = pd.Series(pred, index=x_test.index)
+        train_pred_series = pd.Series(train_pred, index=x_train.index)
+
+        full_prediction = pd.concat([train_pred_series, pred_series], axis=0, ignore_index=True)
 
         harvest_result_fig = go.Figure()
         harvest_result_fig.add_trace(go.Scatter(x=X['Tanggal'], y=y, name='Harvest Result'))
@@ -95,8 +100,6 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
             height=400,  # Mengatur tinggi agar proporsional
             # width=1200 # Bisa diaktifkan jika ingin lebar fix
         )
-
-        """ diff """
 
         comparison = make_subplots(
             rows=1, cols=2,
@@ -147,9 +150,20 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
             yaxis_title="Hasil Panen"
         )
 
+        full_fig = go.Figure()
+        full_fig.add_trace(go.Scatter(x=X['Tanggal'], y=y, mode='lines', name='Data Asli'))
+        full_fig.add_trace(go.Scatter(x=X['Tanggal'], y=full_prediction, mode='lines', name='Prediksi'))
+
+        full_fig.update_layout(
+            title="Perbandingan Data Asli vs Prediksi pada Keseluruhan Data",
+            xaxis_title="Tanggal",
+            yaxis_title="Hasil Panen"
+        )
+
         extra_context['harvest_result_fig'] = harvest_result_fig.to_json()
         extra_context['power_and_result'] = power_and_result.to_json()
         extra_context['comparison'] = comparison.to_json()
         extra_context["test_fig"] = test_fig.to_json()
+        extra_context['full_fig'] = full_fig.to_json()
 
         return super().changelist_view(request, extra_context=extra_context)

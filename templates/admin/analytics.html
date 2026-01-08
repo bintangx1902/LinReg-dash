@@ -41,6 +41,12 @@
         <div id="comparing2" style="height: 400px"></div>
         <br>
     </div>
+    
+    <div class="comparison2 dashboard-container">
+        <h2>Plot perbandingan hasil prediksi pada keseluruhan data v2</h2>
+        <div id="comparing22" style="height: 400px"></div>
+        <br>
+    </div>
     <br><br><br><br>
 
     {{ block.super }}
@@ -52,6 +58,8 @@
         var comparison = {{ comparison | safe }}
         var test_fig = {{ test_fig | safe }};
         var full_fig = {{ full_fig | safe }}
+        var full_fig2 = {{ full_fig2 | safe }}
+        
         var config = {responsive: true}
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -66,6 +74,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             Plotly.newPlot('comparing2', full_fig.data, full_fig.layout, config);
+            Plotly.newPlot('comparing22', full_fig2.data, full_fig2.layout, config);
         });
         {#Plotly.newPlot('plotly-chart', fig.data, fig.layout);#}
     </script>

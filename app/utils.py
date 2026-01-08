@@ -59,7 +59,19 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
         train_pred_series = pd.Series(train_pred, index=x_train.index)
 
         full_prediction = pd.concat([train_pred_series, pred_series], axis=0, ignore_index=True)
+        df_full = pd.DataFrame({
+            'Tanggal': X['Tanggal'],
+            'Actual': y,
+            'Prediction': full_prediction
+        })
 
+        df_full['Bulan'] = df_full['Tanggal'].dt.to_period('M').astype(str)
+
+        df_full_monthly = df_full.groupby('Bulan').agg({
+            'Actual': 'max',
+            'Prediction': 'max'
+        }).reset_index()
+        
         harvest_result_fig = go.Figure()
         # harvest_result_fig.add_trace(go.Scatter(x=X['Tanggal'], y=y, name='Harvest Result'))
         #
@@ -207,10 +219,35 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
             yaxis_title="Hasil Panen",
             template="plotly_white"
         )
+
+        full_fig2 = go.Figure()
+        full_fig2.add_trace(go.Bar(
+            x=df_full_monthly['Bulan'],
+            y=df_full_monthly['Actual'],
+            name='Data Asli (Max)',
+            marker_color='royalblue'
+        ))
+
+        full_fig2.add_trace(go.Bar(
+            x=df_full_monthly['Bulan'],
+            y=df_full_monthly['Prediction'],
+            name='Prediksi (Max)',
+            marker_color='orange'
+        ))
+
+        full_fig2.update_layout(
+            title="Perbandingan Max Data Asli vs Prediksi per Bulan",
+            xaxis_title="Bulan",
+            yaxis_title="Hasil Panen",
+            barmode='group',  
+            xaxis_tickangle=-45,
+            template="plotly_white"
+        )
         extra_context['harvest_result_fig'] = harvest_result_fig.to_json()
         extra_context['power_and_result'] = power_and_result.to_json()
         extra_context['comparison'] = comparison.to_json()
         extra_context["test_fig"] = test_fig.to_json()
         extra_context['full_fig'] = full_fig.to_json()
+        extra_context['full_fig2'] = full_fig2.to_json()
 
         return super().changelist_view(request, extra_context=extra_context)

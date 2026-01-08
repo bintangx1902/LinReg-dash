@@ -3,24 +3,28 @@
 
 {% block extrahead %}
     <script src="https://cdn.plot.ly/plotly-3.3.0.min.js" charset="utf-8"></script>
+    <style>
+        .dashboard-container { margin-bottom: 30px; padding: 15px; background: #fff; border: 1px solid #ccc; border-radius: 4px; }
+        .dashboard-container h2 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; color: black}
+    </style>
 {% endblock %}
 
 {% block content %}
     <h1>Dashboard Analitik Model Linear Regression</h1>
 
-    <div class="harvest_result">
+    <div class="harvest_result dashboard-container">
         <h2>Sebaran data pada hasil panen</h2>
         <div id="plot-harvest-result" style="height: 400px"></div>
         <br>
     </div>
 
-    <div class="harvest_power">
+    <div class="harvest_power dashboard-container">
         <h2>Sebaran data hasil panen dan tenaga panen</h2>
         <div id="plot-power-result" style="height: 400px"></div>
         <br>
     </div>
 
-    <div class="comparison">
+    <div class="comparison dashboard-container">
         <h2>Plot relasi data antara hasil panen dengan hasil dan tenaga panen</h2>
         <div id="comparing" style="height: 400px"></div>
         <br>
@@ -32,11 +36,14 @@
 {#        <br>#}
 {#    </div>#}
 
-    <div class="comparison2">
+    <div class="comparison2 dashboard-container">
         <h2>Plot perbandingan hasil prediksi pada keseluruhan data</h2>
         <div id="comparing2" style="height: 400px"></div>
         <br>
     </div>
+    <br><br><br><br>
+
+    {{ block.super }}
 
     <script>
         {#var fig = JSON.parse('{{ fig|safe }}');#}
@@ -45,25 +52,20 @@
         var comparison = {{ comparison | safe }}
         var test_fig = {{ test_fig | safe }};
         var full_fig = {{ full_fig | safe }}
+        var config = {responsive: true}
 
         document.addEventListener('DOMContentLoaded', function () {
-            Plotly.newPlot('plot-harvest-result', harvest_result.data, harvest_result.layout);
+            Plotly.newPlot('plot-harvest-result', harvest_result.data, harvest_result.layout, config);
+
+            Plotly.newPlot('plot-power-result', power_and_result.data, power_and_result.layout, config);
+
+            Plotly.newPlot('comparing', comparison.data, comparison.layout, config);
+
+            Plotly.newPlot('plotly-chart', test_fig.data, test_fig.layout, config);
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            Plotly.newPlot('plot-power-result', power_and_result.data, power_and_result.layout);
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            Plotly.newPlot('comparing', comparison.data, comparison.layout);
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            Plotly.newPlot('plotly-chart', test_fig.data, test_fig.layout);
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            Plotly.newPlot('comparing2', full_fig.data, full_fig.layout);
+            Plotly.newPlot('comparing2', full_fig.data, full_fig.layout, config);
         });
         {#Plotly.newPlot('plotly-chart', fig.data, fig.layout);#}
     </script>

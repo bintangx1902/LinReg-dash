@@ -42,6 +42,13 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
         X = df[['Tanggal', 'Hasil', 'tenaga panen']]
         y = df['Hasil Panen']
 
+        X['Tanggal'] = pd.to_datetime(X['Tanggal'])
+
+        df_temp = X.copy()
+        df_temp['Harvest Result'] = y
+        df_temp['Bulan'] = df_temp['Tanggal'].dt.to_period('M').astype(str)
+        df_monthly = df_temp.groupby('Bulan')['Harvest Result'].agg(['min', 'mean', 'max']).reset_index()
+
         x_train, x_test, y_train, y_test = train_test_split(X.drop('Tanggal', axis=1), y, test_size=0.2, shuffle=False)
         train_date, test_date = train_test_split(X['Tanggal'], test_size=0.2, shuffle=False)
         
@@ -54,13 +61,46 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
         full_prediction = pd.concat([train_pred_series, pred_series], axis=0, ignore_index=True)
 
         harvest_result_fig = go.Figure()
-        harvest_result_fig.add_trace(go.Scatter(x=X['Tanggal'], y=y, name='Harvest Result'))
+        # harvest_result_fig.add_trace(go.Scatter(x=X['Tanggal'], y=y, name='Harvest Result'))
+        #
+        # harvest_result_fig.update_layout(
+        #     title='Sebaran Hasil Panen',
+        #     xaxis_tickangle=-45,
+        #     xaxis_title='Tanggal',
+        #     yaxis_title='Harvest Result',
+        # )
 
+        # Trace untuk min
+        harvest_result_fig.add_trace(go.Bar(
+            x=df_monthly['Bulan'],
+            y=df_monthly['min'],
+            name='Min',
+            marker_color='indianred'
+        ))
+
+        # Trace untuk Average
+        harvest_result_fig.add_trace(go.Bar(
+            x=df_monthly['Bulan'],
+            y=df_monthly['mean'],
+            name='Average',
+            marker_color='lightsalmon'
+        ))
+
+        # Trace untuk Maximum
+        harvest_result_fig.add_trace(go.Bar(
+            x=df_monthly['Bulan'],
+            y=df_monthly['max'],
+            name='Max',
+            marker_color='seagreen'
+        ))
+
+        # 6. Update Layout
         harvest_result_fig.update_layout(
-            title='Sebaran Hasil Panen',
-            xaxis_tickangle=-45,
-            xaxis_title='Tanggal',
+            title='Agregat Hasil Panen per Bulan (Min, Avg, Max)',
+            xaxis_title='Bulan',
             yaxis_title='Harvest Result',
+            barmode='group',  # Membuat bar bersampingan
+            xaxis_tickangle=-45
         )
 
         power_and_result = make_subplots(
@@ -98,7 +138,6 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
             title_text="Analisis Data Sawit",  # Judul Utama (Opsional)
             showlegend=True,
             height=400,  # Mengatur tinggi agar proporsional
-            # width=1200 # Bisa diaktifkan jika ingin lebar fix
         )
 
         comparison = make_subplots(
@@ -111,7 +150,7 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
                 x=y,
                 y=X['Hasil'],
                 name='Hasil (HA)',
-                mode='lines'  # Gunakan 'lines' agar bentuknya garis seperti di gambar
+                mode='markers'
             ),
             row=1, col=1
         )
@@ -121,7 +160,7 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
                 x=y,
                 y=X['tenaga panen'],
                 name='Tenaga Panen',
-                mode='lines'
+                mode='markers'
             ),
             row=1, col=2
         )
@@ -136,9 +175,7 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
             title_text="Analisis Data Sawit",  # Judul Utama (Opsional)
             showlegend=True,
             height=400,  # Mengatur tinggi agar proporsional
-            # width=1200 # Bisa diaktifkan jika ingin lebar fix
         )
-
 
         test_fig = go.Figure()
         test_fig.add_trace(go.Scatter(x=test_date, y=y_test, mode='lines', name='Data Asli'))
@@ -151,15 +188,25 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
         )
 
         full_fig = go.Figure()
-        full_fig.add_trace(go.Scatter(x=X['Tanggal'], y=y, mode='lines', name='Data Asli'))
-        full_fig.add_trace(go.Scatter(x=X['Tanggal'], y=full_prediction, mode='lines', name='Prediksi'))
+        full_fig.add_trace(go.Scatter(
+            x=X['Tanggal'],
+            y=y,
+            mode='lines',
+            name='Data Asli'
+        ))
+        full_fig.add_trace(go.Scatter(
+            x=X['Tanggal'],
+            y=full_prediction,
+            mode='lines',
+            name='Prediksi'
+        ))
 
         full_fig.update_layout(
             title="Perbandingan Data Asli vs Prediksi pada Keseluruhan Data",
             xaxis_title="Tanggal",
-            yaxis_title="Hasil Panen"
+            yaxis_title="Hasil Panen",
+            template="plotly_white"
         )
-
         extra_context['harvest_result_fig'] = harvest_result_fig.to_json()
         extra_context['power_and_result'] = power_and_result.to_json()
         extra_context['comparison'] = comparison.to_json()

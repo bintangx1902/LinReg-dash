@@ -94,37 +94,21 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
         #     yaxis_title='Harvest Result',
         # )
 
-        # Trace untuk min
-        harvest_result_fig.add_trace(go.Bar(
-            x=df_monthly['Bulan'],
-            y=df_monthly['min'],
-            name='Min',
-            marker_color='indianred'
-        ))
+        harvest_result_fig = go.Figure()
 
-        # Trace untuk Average
-        harvest_result_fig.add_trace(go.Bar(
-            x=df_monthly['Bulan'],
-            y=df_monthly['mean'],
-            name='Average',
-            marker_color='lightsalmon'
-        ))
-
-        # Trace untuk Maximum
         harvest_result_fig.add_trace(go.Bar(
             x=df_monthly['Bulan'],
             y=df_monthly['max'],
-            name='Max',
+            name='Max Harvest',
             marker_color='seagreen'
         ))
 
-        # 6. Update Layout
         harvest_result_fig.update_layout(
-            title='Agregat Hasil Panen per Bulan (Min, Avg, Max)',
+            title='Maksimum Hasil Panen per Bulan',
             xaxis_title='Bulan',
-            yaxis_title='Harvest Result',
-            barmode='group',  # Membuat bar bersampingan
-            xaxis_tickangle=-45
+            yaxis_title='Hasil Panen (Max)',
+            xaxis_tickangle=-45,
+            template='plotly_white'
         )
 
         power_and_result = make_subplots(

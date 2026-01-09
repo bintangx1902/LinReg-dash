@@ -3,5 +3,11 @@
 .idea/
 .idea
 
+.env/
+.venv/
+env/
+venv/
+
+
 db.sqlite3
 **/*.sqlite3

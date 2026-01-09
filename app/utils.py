@@ -49,9 +49,10 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
         df_temp['Bulan'] = df_temp['Tanggal'].dt.to_period('M').astype(str)
         df_monthly = df_temp.groupby('Bulan')['Harvest Result'].agg(['min', 'mean', 'max']).reset_index()
 
-        x_train, x_test, y_train, y_test = train_test_split(X.drop('Tanggal', axis=1), y, test_size=0.2, shuffle=False)
+        x_train, x_test, y_train, y_test = train_test_split(X.drop('Tanggal', axis=1), y, test_size=0.2,
+                                                            shuffle=False)
         train_date, test_date = train_test_split(X['Tanggal'], test_size=0.2, shuffle=False)
-        
+
         pred = model.predict(x_test)
         train_pred = model.predict(x_train)
 
@@ -59,6 +60,7 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
         train_pred_series = pd.Series(train_pred, index=x_train.index)
 
         full_prediction = pd.concat([train_pred_series, pred_series], axis=0, ignore_index=True)
+
         df_full = pd.DataFrame({
             'Tanggal': X['Tanggal'],
             'Actual': y,
@@ -71,7 +73,17 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
             'Actual': 'max',
             'Prediction': 'max'
         }).reset_index()
-        
+
+        df_power_agg = X.copy()
+        df_power_agg['Harvest Result'] = y
+        df_power_agg['Bulan'] = df_power_agg['Tanggal'].dt.to_period('M').astype(str)
+
+        # Agregasi Max untuk kedua kolom
+        df_monthly_power = df_power_agg.groupby('Bulan').agg({
+            'Harvest Result': 'max',
+            'tenaga panen': 'max'
+        }).reset_index()
+
         harvest_result_fig = go.Figure()
         # harvest_result_fig.add_trace(go.Scatter(x=X['Tanggal'], y=y, name='Harvest Result'))
         #
@@ -117,39 +129,43 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
 
         power_and_result = make_subplots(
             rows=1, cols=2,
-            subplot_titles=("Grafik sebaran data Hasil (HA)", "Grafik Sebaran Data Tenaga Panen")
+            subplot_titles=("Max Hasil Panen (HA) per Bulan", "Max Tenaga Panen per Bulan")
         )
 
+        # Subplot 1: Max Hasil Panen
         power_and_result.add_trace(
-            go.Scatter(
-                x=X['Tanggal'],
-                y=y,
-                name='Hasil (HA)',
-                mode='lines'  # Gunakan 'lines' agar bentuknya garis seperti di gambar
+            go.Bar(
+                x=df_monthly_power['Bulan'],
+                y=df_monthly_power['Harvest Result'],
+                name='Max Hasil Panen',
+                marker_color='teal'
             ),
             row=1, col=1
         )
 
+        # Subplot 2: Max Tenaga Panen
         power_and_result.add_trace(
-            go.Scatter(
-                x=X['Tanggal'],
-                y=y,
-                name='Tenaga Panen',
-                mode='lines'
+            go.Bar(
+                x=df_monthly_power['Bulan'],
+                y=df_monthly_power['tenaga panen'],
+                name='Max Tenaga Panen',
+                marker_color='goldenrod'
             ),
             row=1, col=2
         )
 
-        power_and_result.update_xaxes(title_text="Tanggal", showgrid=True, row=1, col=1)
-        power_and_result.update_yaxes(title_text="Hasil Panen", showgrid=True, row=1, col=1)
+        # 3. Update Axes dan Layout
+        power_and_result.update_xaxes(title_text="Bulan", tickangle=-45, row=1, col=1)
+        power_and_result.update_yaxes(title_text="Hasil Panen", row=1, col=1)
 
-        power_and_result.update_xaxes(title_text="Tanggal", showgrid=True, row=1, col=2)
-        power_and_result.update_yaxes(title_text="Tenaga Panen", showgrid=True, row=1, col=2)
+        power_and_result.update_xaxes(title_text="Bulan", tickangle=-45, row=1, col=2)
+        power_and_result.update_yaxes(title_text="Jumlah Tenaga", row=1, col=2)
 
         power_and_result.update_layout(
-            title_text="Analisis Data Sawit",  # Judul Utama (Opsional)
+            title_text="Analisis Maksimum Bulanan: Hasil vs Tenaga",
             showlegend=True,
-            height=400,  # Mengatur tinggi agar proporsional
+            height=450,
+            template='plotly_white'
         )
 
         comparison = make_subplots(
@@ -239,7 +255,7 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
             title="Perbandingan Max Data Asli vs Prediksi per Bulan",
             xaxis_title="Bulan",
             yaxis_title="Hasil Panen",
-            barmode='group',  
+            barmode='group',
             xaxis_tickangle=-45,
             template="plotly_white"
         )

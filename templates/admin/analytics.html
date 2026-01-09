@@ -36,11 +36,11 @@
 {#        <br>#}
 {#    </div>#}
 
-    <div class="comparison2 dashboard-container">
-        <h2>Plot perbandingan hasil prediksi pada keseluruhan data</h2>
-        <div id="comparing2" style="height: 400px"></div>
-        <br>
-    </div>
+{#    <div class="comparison2 dashboard-container">#}
+{#        <h2>Plot perbandingan hasil prediksi pada keseluruhan data</h2>#}
+{#        <div id="comparing2" style="height: 400px"></div>#}
+{#        <br>#}
+{#    </div>#}
     
     <div class="comparison2 dashboard-container">
         <h2>Plot perbandingan hasil prediksi pada keseluruhan data v2</h2>
@@ -73,7 +73,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            Plotly.newPlot('comparing2', full_fig.data, full_fig.layout, config);
+            {#Plotly.newPlot('comparing2', full_fig.data, full_fig.layout, config);#}
             Plotly.newPlot('comparing22', full_fig2.data, full_fig2.layout, config);
         });
         {#Plotly.newPlot('plotly-chart', fig.data, fig.layout);#}

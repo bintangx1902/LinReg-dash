@@ -159,8 +159,8 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
 
         comparison.add_trace(
             go.Scatter(
-                x=y,
-                y=X['Hasil'],
+                x=X['Hasil'],
+                y=y,
                 name='Hasil (HA)',
                 mode='markers'
             ),
@@ -169,8 +169,8 @@ class ModelAnalyticsAdminView(admin.ModelAdmin):
 
         comparison.add_trace(
             go.Scatter(
-                x=y,
-                y=X['tenaga panen'],
+                x=X['tenaga panen'],
+                y=y,
                 name='Tenaga Panen',
                 mode='markers'
             ),
